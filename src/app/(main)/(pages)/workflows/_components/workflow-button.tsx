@@ -1,42 +1,43 @@
-"use client";
-import WorkFlowForm from "@/components/forms/workflow-form";
-import CustomModal from "@/components/global/custom-modal";
-import { useBilling } from "@/components/providers/billing-provider";
-import { useModal } from "@/components/providers/modal-provider";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import React from "react";
+'use client'
+import Workflowform from '@/components/forms/workflow-form'
+import CustomModal from '@/components/global/custom-modal'
+import { Button } from '@/components/ui/button'
+import { useBilling } from '@/providers/billing-provider'
+import { useModal } from '@/providers/modal-provider'
+import { Plus } from 'lucide-react'
+import React from 'react'
 
-type Props = {};
+type Props = {}
 
 const WorkflowButton = (props: Props) => {
-  const { setOpen, setClose } = useModal();
-  const { credits } = useBilling();
+  const { setOpen, setClose } = useModal()
+  const { credits } = useBilling()
 
   const handleClick = () => {
     setOpen(
       <CustomModal
         title="Create a Workflow Automation"
-        subHeading="Workflows are a powerful way to help you automate tasks."
+        subheading="Workflows are a powerfull that help you automate tasks."
       >
-        <WorkFlowForm />
+        <Workflowform />
       </CustomModal>
-    );
-  };
+    )
+  }
+
   return (
     <Button
       size={'icon'}
       {...(credits !== '0'
         ? {
-          onClick: handleClick,
-        }
+            onClick: handleClick,
+          }
         : {
-          disabled: true,
-        })}
+            disabled: true,
+          })}
     >
       <Plus />
     </Button>
-  );
-};
+  )
+}
 
-export default WorkflowButton;
+export default WorkflowButton

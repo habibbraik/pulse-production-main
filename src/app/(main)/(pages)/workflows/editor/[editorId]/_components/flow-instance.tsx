@@ -1,24 +1,24 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { useNodeConnections } from "@/components/providers/connection-provider";
-import { usePathname } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
+'use client'
+import { Button } from '@/components/ui/button'
+import { useNodeConnections } from '@/providers/connections-provider'
+import { usePathname } from 'next/navigation'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   onCreateNodesEdges,
   onFlowPublish,
 } from '../_actions/workflow-connections'
-import { toast } from "sonner";
+import { toast } from 'sonner'
 
 type Props = {
-  children: React.ReactNode;
-  edges: any[];
-  nodes: any[];
-};
+  children: React.ReactNode
+  edges: any[]
+  nodes: any[]
+}
 
 const FlowInstance = ({ children, edges, nodes }: Props) => {
-  const pathname = usePathname();
-  const [isFlow, setIsFlow] = useState([]);
-  const { nodeConnection } = useNodeConnections();
+  const pathname = usePathname()
+  const [isFlow, setIsFlow] = useState([])
+  const { nodeConnection } = useNodeConnections()
 
   const onFlowAutomation = useCallback(async () => {
     const flow = await onCreateNodesEdges(
@@ -37,22 +37,22 @@ const FlowInstance = ({ children, edges, nodes }: Props) => {
   }, [])
 
   const onAutomateFlow = async () => {
-    const flows: any = [];
-    const connectedEdges = edges.map((edge) => edge.target);
+    const flows: any = []
+    const connectedEdges = edges.map((edge) => edge.target)
     connectedEdges.map((target) => {
       nodes.map((node) => {
         if (node.id === target) {
-          flows.push(node.type);
+          flows.push(node.type)
         }
-      });
-    });
+      })
+    })
 
-    setIsFlow(flows);
-  };
+    setIsFlow(flows)
+  }
 
   useEffect(() => {
-    onAutomateFlow();
-  }, [edges]);
+    onAutomateFlow()
+  }, [edges])
 
   return (
     <div className="flex flex-col gap-2">
@@ -72,7 +72,7 @@ const FlowInstance = ({ children, edges, nodes }: Props) => {
       </div>
       {children}
     </div>
-  );
-};
+  )
+}
 
-export default FlowInstance;
+export default FlowInstance

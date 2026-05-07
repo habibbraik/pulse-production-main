@@ -1,5 +1,6 @@
 import { AccordionContent } from '@/components/ui/accordion'
-
+import { ConnectionProviderProps } from '@/providers/connections-provider'
+import { EditorState } from '@/providers/editor-provider'
 import { nodeMapper } from '@/lib/types'
 import React, { useEffect } from 'react'
 import {
@@ -17,8 +18,6 @@ import ActionButton from './action-button'
 import { getFileMetaData } from '@/app/(main)/(pages)/connections/_actions/google-connection'
 import axios from 'axios'
 import { toast } from 'sonner'
-import { ConnectionProviderProps } from '@/components/providers/connection-provider'
-import { EditorState } from '@/components/providers/editor-provider'
 
 export interface Option {
   value: string
@@ -54,40 +53,22 @@ const ContentBasedOnTitle = ({
   const title = selectedNode.data.title
 
   useEffect(() => {
-    let isMounted = true;
-
     const reqGoogle = async () => {
-      // Only fetch once when component mounts with specific titles
-      if (!isMounted) return;
-
-      try {
-        const response: { data: { message: { files: any[] } } } = await axios.get(
-          '/api/drive'
-        )
-        if (isMounted && response?.data?.message?.files && response.data.message.files.length > 0) {
-          const firstFile = response.data.message.files[0]
-          setFile(firstFile)
-          toast.success(`Loaded: ${firstFile.name || 'Untitled'}`)
-        } else if (isMounted) {
-          toast.error('No files found in Google Drive')
-        }
-      } catch (error) {
-        if (isMounted) {
-          console.error('Error fetching Google Drive files:', error)
-          toast.error('Failed to fetch Google Drive files')
-        }
+      const response: { data: { message: { files: any } } } = await axios.get(
+        '/api/drive'
+      )
+      if (response) {
+        console.log(response.data.message.files[0])
+        toast.message("Fetched File")
+        setFile(response.data.message.files[0])
+      } else {
+        toast.error('Something went wrong')
       }
     }
+    reqGoogle()
+  }, [])
 
-    // Only fetch for relevant node types and only once
-    if (title === 'Discord' || title === 'Notion' || title === 'Slack') {
-      reqGoogle()
-    }
-
-    return () => {
-      isMounted = false;
-    }
-  }, [title])  // @ts-ignore
+  // @ts-ignore
   const nodeConnectionType: any = nodeConnection[nodeMapper[title]]
   if (!nodeConnectionType) return <p>Not connected</p>
 
@@ -95,15 +76,16 @@ const ContentBasedOnTitle = ({
     title === 'Google Drive'
       ? !nodeConnection.isLoading
       : !!nodeConnectionType[
-      `${title === 'Slack'
-        ? 'slackAccessToken'
-        : title === 'Discord'
-          ? 'webhookURL'
-          : title === 'Notion'
-            ? 'accessToken'
-            : ''
-      }`
-      ]
+          `${
+            title === 'Slack'
+              ? 'slackAccessToken'
+              : title === 'Discord'
+              ? 'webhookURL'
+              : title === 'Notion'
+              ? 'accessToken'
+              : ''
+          }`
+        ]
 
   if (!isConnected) return <p>Not connected</p>
 
