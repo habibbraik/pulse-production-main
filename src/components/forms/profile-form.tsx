@@ -1,54 +1,49 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { EditUserProfileSchema } from "@/lib/types";
+import React, { use, useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { EditUserProfileSchema } from '@/lib/types'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Loader2 } from "lucide-react";
-
-const formSchema = z.object({
-  username: z.string().min(2).max(50),
-});
+} from '../ui/form'
+import { Input } from '../ui/input'
+import { Button } from '../ui/button'
+import { Loader2 } from 'lucide-react'
 
 type Props = {
-  user: any;
-  onUpdate?: any;
-};
+  user: any
+  onUpdate?: any
+}
 
 const ProfileForm = ({ user, onUpdate }: Props) => {
-  const [loading, setloading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
   const form = useForm<z.infer<typeof EditUserProfileSchema>>({
-    mode: "onChange",
+    mode: 'onChange',
     resolver: zodResolver(EditUserProfileSchema),
     defaultValues: {
       name: user.name,
       email: user.email,
     },
-  });
+  })
 
   const handleSubmit = async (
     values: z.infer<typeof EditUserProfileSchema>
   ) => {
-    setloading(true);
-    await onUpdate(values.name);
-    setloading(false);
-  };
+    setIsLoading(true)
+    await onUpdate(values.name)
+    setIsLoading(false)
+  }
 
   useEffect(() => {
-    form.reset({ name: user.name, email: user.email });
-  }, [user]);
+    form.reset({ name: user.name, email: user.email })
+  }, [user])
 
   return (
     <Form {...form}>
@@ -57,18 +52,18 @@ const ProfileForm = ({ user, onUpdate }: Props) => {
         onSubmit={form.handleSubmit(handleSubmit)}
       >
         <FormField
-          disabled={loading}
+          disabled={isLoading}
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg">Username</FormLabel>
+              <FormLabel className="text-lg">User full name</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Name" />
+                <Input
+                  {...field}
+                  placeholder="Name"
+                />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -82,9 +77,9 @@ const ProfileForm = ({ user, onUpdate }: Props) => {
               <FormControl>
                 <Input
                   {...field}
+                  disabled={true}
                   placeholder="Email"
                   type="email"
-                  disabled={true}
                 />
               </FormControl>
               <FormMessage />
@@ -95,18 +90,18 @@ const ProfileForm = ({ user, onUpdate }: Props) => {
           type="submit"
           className="self-start hover:bg-[#2F006B] hover:text-white "
         >
-          {loading ? (
+          {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Saving
             </>
           ) : (
-            "Save User Settings"
+            'Save User Settings'
           )}
         </Button>
       </form>
     </Form>
-  );
-};
+  )
+}
 
-export default ProfileForm;
+export default ProfileForm
